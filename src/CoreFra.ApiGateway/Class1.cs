@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CoreFra.RepositoryPattern
+namespace CoreFra.ApiGateway
 {
     public class Class1
     {
