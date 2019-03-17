@@ -1,6 +1,6 @@
 ﻿using CoreFra.Domain;
 
-namespace CoreFra.RepositoryPattern
+namespace CoreFra.Repository
 {
     public interface IGenericRepository<TEntity> where TEntity : BaseEntity
     {

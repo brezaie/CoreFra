@@ -1,4 +1,4 @@
-﻿namespace CoreFra.RepositoryPattern
+﻿namespace CoreFra.Repository
 {
     public class EfCoreGenericRepository
     {

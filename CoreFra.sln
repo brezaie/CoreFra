@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreFra.IoC", "src\CoreFra.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreFra.Logging", "src\CoreFra.Logging\CoreFra.Logging.csproj", "{79D38F77-1B05-4BF3-B1D9-4BDE985094F5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreFra.RepositoryPattern", "src\CoreFra.RepositoryPattern\CoreFra.RepositoryPattern.csproj", "{5E9529E1-4813-4345-A5FE-8D3291055369}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreFra.Repository", "src\CoreFra.RepositoryPattern\CoreFra.Repository.csproj", "{5E9529E1-4813-4345-A5FE-8D3291055369}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{E648364A-2986-4203-A567-979BCEF442D6}"
 EndProject
