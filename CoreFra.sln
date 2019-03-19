@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreFra.Test.WebApp", "test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreFra.Repository", "src\CoreFra.Repository\CoreFra.Repository.csproj", "{F58EF19C-F808-46E3-B4C7-6610176FB1CF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreFra.Service", "CoreFra.Service\CoreFra.Service.csproj", "{7C0E0F78-032D-4356-B739-03C6C745F052}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{F58EF19C-F808-46E3-B4C7-6610176FB1CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F58EF19C-F808-46E3-B4C7-6610176FB1CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F58EF19C-F808-46E3-B4C7-6610176FB1CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C0E0F78-032D-4356-B739-03C6C745F052}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C0E0F78-032D-4356-B739-03C6C745F052}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C0E0F78-032D-4356-B739-03C6C745F052}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C0E0F78-032D-4356-B739-03C6C745F052}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,6 +80,7 @@ Global
 		{4AEF8C3E-8419-4150-A11A-BCC1CAE6394D} = {E648364A-2986-4203-A567-979BCEF442D6}
 		{6FB7FE94-CF96-4911-A89B-74596C91AF1D} = {E648364A-2986-4203-A567-979BCEF442D6}
 		{F58EF19C-F808-46E3-B4C7-6610176FB1CF} = {26BD768E-BE96-472F-8D1E-42CC34B7AA43}
+		{7C0E0F78-032D-4356-B739-03C6C745F052} = {26BD768E-BE96-472F-8D1E-42CC34B7AA43}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1B18BC13-B623-4951-A175-671A7E242F54}
