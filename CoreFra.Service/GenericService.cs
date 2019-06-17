@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreFra.Domain;
 using CoreFra.Repository;
 
 namespace CoreFra.Service
@@ -12,72 +13,77 @@ namespace CoreFra.Service
 
         public IQueryable<TEntity> Queryable()
         {
-            throw new System.NotImplementedException();
+            return Repository.Queryable();
         }
 
         public IEnumerable<TEntity> GetAll()
         {
-            throw new System.NotImplementedException();
+            return Repository.GetAll();
+        }
+
+        public PagedCollection<TEntity> GetPagedCollection(int pageNumber = 1, int pageSize = 10)
+        {
+            return Repository.GetPagedCollection(pageNumber, pageSize);
         }
 
         public TEntity FindById(int id)
         {
-            throw new System.NotImplementedException();
+            return Repository.FindById(id);
         }
 
         public Task<TEntity> FindByIdAsync(int id)
         {
-            throw new System.NotImplementedException();
+            return Repository.FindByIdAsync(id);
         }
 
         public void Insert(TEntity entity)
         {
-            throw new System.NotImplementedException();
+            Repository.Insert(entity);
         }
 
         public Task InsertAsync(TEntity entity)
         {
-            throw new System.NotImplementedException();
+            return Repository.InsertAsync(entity);
         }
 
         public void BulkInsert(IEnumerable<TEntity> entities)
         {
-            throw new System.NotImplementedException();
+            Repository.BulkInsert(entities);
         }
 
         public Task BulkInsertAsync(IEnumerable<TEntity> entities)
         {
-            throw new System.NotImplementedException();
+            return Repository.BulkInsertAsync(entities);
         }
 
         public void Update(TEntity entity)
         {
-            throw new System.NotImplementedException();
+            Repository.Update(entity);
         }
 
         public Task UpdateAsync(TEntity entity)
         {
-            throw new System.NotImplementedException();
+            return Repository.UpdateAsync(entity);
         }
 
         public void Delete(int id)
         {
-            throw new System.NotImplementedException();
+            Repository.Delete(id);
         }
 
         public Task DeleteAsync(int id)
         {
-            throw new System.NotImplementedException();
+            return Repository.DeleteAsync(id);
         }
 
         public void SaveChanges()
         {
-            throw new System.NotImplementedException();
+            Repository.SaveChanges();
         }
 
         public Task SaveChangesAsync()
         {
-            throw new System.NotImplementedException();
+            return Repository.SaveChangesAsync();
         }
     }
 }

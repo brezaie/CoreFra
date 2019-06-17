@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreFra.Domain;
 
 namespace CoreFra.Service
 {
@@ -8,6 +9,7 @@ namespace CoreFra.Service
     {
         IQueryable<TEntity> Queryable();
         IEnumerable<TEntity> GetAll();
+        PagedCollection<TEntity> GetPagedCollection(int pageNumber = 1, int pageSize = 10);
         TEntity FindById(int id);
         Task<TEntity> FindByIdAsync(int id);
 

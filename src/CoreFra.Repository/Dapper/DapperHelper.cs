@@ -159,7 +159,7 @@ namespace CoreFra.Repository
                 {
                     var value = properties[i].GetValue(item, null);
                     if (dataTable.Columns[i].DataType == typeof(DateTime))
-                        values[i] = ((DateTimeOffset) value).DateTime;
+                        values[i] = ((DateTimeOffset)value).DateTime;
                     else
                         values[i] = value;
 
@@ -176,11 +176,8 @@ namespace CoreFra.Repository
             var propertyContainer = new PropertyContainer();
 
             var typeName = typeof(T).Name;
-            var validKeyNames = new[]
-            {
-                "Id",
-                string.Format("{0}Id", typeName), string.Format("{0}_Id", typeName)
-            };
+            var validKeyNames = new[] { "Id",
+                string.Format("{0}Id", typeName), string.Format("{0}_Id", typeName) };
 
             var properties = typeof(T).GetProperties();
             foreach (var property in properties)
@@ -203,11 +200,12 @@ namespace CoreFra.Repository
                 if (property.IsDefined(typeof(DapperKey), false) || validKeyNames.Contains(name))
                 {
                     propertyContainer.AddId(name, value);
+                    //continue;
                 }
-                //else
-                //{
-                propertyContainer.AddValue(name, value);
-                //}
+                else
+                {
+                    propertyContainer.AddValue(name, value);
+                }
             }
 
             return propertyContainer;

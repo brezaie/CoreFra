@@ -13,14 +13,17 @@ namespace CoreFra.Repository
     {
         IQueryable<TEntity> Queryable();
         IEnumerable<TEntity> GetAll();
+        PagedCollection<TEntity> GetPagedCollection(int pageNumber = 1, int pageSize = 10);
         TEntity FindById(int id);
         Task<TEntity> FindByIdAsync(int id);
 
 
         void Insert(TEntity entity);
         Task InsertAsync(TEntity entity);
-        void BulkInsert(IEnumerable<TEntity> entities, SqlTransaction transaction = null, int batchSize = 0, int bulkCopyTimeout = 30);
-        Task BulkInsertAsync(IEnumerable<TEntity> entities, SqlTransaction transaction = null, int batchSize = 0, int bulkCopyTimeout = 30);
+        void BulkInsert(IEnumerable<TEntity> entities, SqlTransaction transaction = null, int batchSize = 0,
+            int bulkCopyTimeout = 30);
+        Task BulkInsertAsync(IEnumerable<TEntity> entities, SqlTransaction transaction = null, int batchSize = 0,
+            int bulkCopyTimeout = 30);
 
 
         void Update(TEntity entity);

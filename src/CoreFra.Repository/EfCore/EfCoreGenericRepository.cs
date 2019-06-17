@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using CoreFra.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoreFra.Repository.EfCore
@@ -12,7 +13,6 @@ namespace CoreFra.Repository.EfCore
     {
         protected readonly DbContext _dbContext;
         protected readonly DbSet<TEntity> _dbSet;
-        private readonly IQuery<TEntity> _query;
 
         #region Constructor
 
@@ -20,7 +20,6 @@ namespace CoreFra.Repository.EfCore
         {
             _dbContext = dbContext;
             _dbSet = _dbContext.Set<TEntity>();
-            _query = new Query<TEntity>(this);
         }
 
         #endregion
@@ -38,6 +37,13 @@ namespace CoreFra.Repository.EfCore
         public virtual IEnumerable<TEntity> GetAll()
         {
             return _dbSet.ToList();
+        }
+
+        public PagedCollection<TEntity> GetPagedCollection(int pageNumber = 1, int pageSize = 10)
+        {
+            //TODO: Must be implemented later
+
+            throw new NotImplementedException();
         }
 
         public virtual TEntity FindById(int id)

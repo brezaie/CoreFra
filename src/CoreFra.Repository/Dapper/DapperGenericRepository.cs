@@ -4,13 +4,18 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreFra.Domain;
 using Dapper;
+using SqlKata.Compilers;
+using SqlKata.Execution;
 
 namespace CoreFra.Repository.Dapper
 {
     public class DapperGenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {
         public IDbConnection Connection { get; }
+        public SqlServerCompiler Compiler { get; }
+        public QueryFactory QueryFactory { get; }
 
         #region PrivateProperties
 
@@ -23,6 +28,9 @@ namespace CoreFra.Repository.Dapper
         public DapperGenericRepository(IDapperConnectionFactory dapperConnectionFactory)
         {
             Connection = dapperConnectionFactory.Connection;
+            Compiler = new SqlServerCompiler();
+            QueryFactory = new QueryFactory(Connection, Compiler);
+
             _tableName = typeof(TEntity).Name;
         }
 
@@ -30,70 +38,140 @@ namespace CoreFra.Repository.Dapper
 
         public IQueryable<TEntity> Queryable()
         {
-            var query = $"SELECT * FROM {_tableName}";
+            try
+            {
+                var query = $"SELECT * FROM {_tableName}";
 
-            if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
-                Connection.Open();
+                if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
+                    Connection.Open();
 
-            return Connection.Query<TEntity>(query).AsQueryable();
+                return Connection.Query<TEntity>(query).AsQueryable();
+            }
+            finally
+            {
+                Connection.Close();
+            }
         }
 
         public IEnumerable<TEntity> GetAll()
         {
-            var query = $"SELECT * FROM {_tableName}";
+            try
+            {
+                var query = $"SELECT * FROM {_tableName}";
 
-            if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
-                Connection.Open();
+                if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
+                    Connection.Open();
 
-            return Connection.Query<TEntity>(query).ToList();
+                return Connection.Query<TEntity>(query).ToList();
+            }
+            finally
+            {
+                Connection.Close();
+            }
+        }
+
+        public PagedCollection<TEntity> GetPagedCollection(int pageNumber = 1, int pageSize = 10)
+        {
+            try
+            {
+                if (pageNumber <= 0)
+                    pageNumber = 1;
+                if (pageSize <= 0)
+                    pageSize = 10;
+
+                var lst = QueryFactory.Query(_tableName).PaginateAsync<TEntity>(pageNumber, pageSize).Result;
+
+                var res = new PagedCollection<TEntity>
+                {
+                    List = lst.List,
+                    PageNumber = lst.Page,
+                    PageSize = lst.PerPage,
+                    TotalCount = lst.Count,
+                    TotalPages = lst.TotalPages
+                };
+
+                return res;
+            }
+            finally
+            {
+                QueryFactory.Connection.Close();
+            }
         }
 
         public TEntity FindById(int id)
         {
-            var query = $"SELECT * FROM {_tableName} WHERE Id = @Id";
+            try
+            {
+                var query = $"SELECT * FROM {_tableName} WHERE Id = @Id";
 
-            if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
-                Connection.Open();
+                if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
+                    Connection.Open();
 
-            var res = Connection.QueryFirstOrDefault<TEntity>(query, new { Id = id });
-            return res;
+                var res = Connection.QueryFirstOrDefault<TEntity>(query, new {Id = id});
+                return res;
+            }
+            finally
+            {
+                Connection.Close();
+            }
         }
 
         public async Task<TEntity> FindByIdAsync(int id)
         {
-            var query = $"SELECT * FROM {_tableName} WHERE Id = @Id";
+            try
+            {
+                var query = $"SELECT * FROM {_tableName} WHERE Id = @Id";
 
-            if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
-                Connection.Open();
+                if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
+                    Connection.Open();
 
-            var res = await Connection.QueryFirstOrDefaultAsync<TEntity>(query, new { Id = id });
-            return res;
+                var res = await Connection.QueryFirstOrDefaultAsync<TEntity>(query, new {Id = id});
+                return res;
+            }
+            finally
+            {
+                Connection.Close();
+            }
         }
 
         public void Insert(TEntity entity)
         {
-            if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
-                Connection.Open();
+            try
+            {
+                if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
+                    Connection.Open();
 
-            var propertyContainer = DapperHelper.ParseProperties(entity);
-            var query =
-                $"INSERT INTO [{_tableName}] ({string.Join(", ", propertyContainer.ValueNames)}) " +
-                $"VALUES(@{string.Join(", @", propertyContainer.ValueNames.Select(x => x.Replace("[", "").Replace("]", "")))})";
+                var propertyContainer = DapperHelper.ParseProperties(entity);
+                var query =
+                    $"INSERT INTO [{_tableName}] ({string.Join(", ", propertyContainer.ValueNames)}) " +
+                    $"VALUES(@{string.Join(", @", propertyContainer.ValueNames.Select(x => x.Replace("[", "").Replace("]", "")))})";
 
-            Connection.Execute(query, propertyContainer.AllPairs, commandType: CommandType.Text);
+                Connection.Execute(query, propertyContainer.AllPairs, commandType: CommandType.Text);
+            }
+            finally
+            {
+                Connection.Close();
+            }
         }
 
         public async Task InsertAsync(TEntity entity)
         {
-            if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
-                Connection.Open();
+            try
+            {
+                if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
+                    Connection.Open();
 
-            var propertyContainer = DapperHelper.ParseProperties(entity);
-            var query =
-                $"INSERT INTO [{_tableName}] ({string.Join(", ", propertyContainer.ValueNames)}) " +
-                $"VALUES(@{string.Join(", @", propertyContainer.ValueNames.Select(x => x.Replace("[", "").Replace("]", "")))})";
+                var propertyContainer = DapperHelper.ParseProperties(entity);
+                var query =
+                    $"INSERT INTO [{_tableName}] ({string.Join(", ", propertyContainer.ValueNames)}) " +
+                    $"VALUES(@{string.Join(", @", propertyContainer.ValueNames.Select(x => x.Replace("[", "").Replace("]", "")))})";
 
-            await Connection.ExecuteAsync(query, propertyContainer.AllPairs, commandType: CommandType.Text);
+                await Connection.ExecuteAsync(query, propertyContainer.AllPairs, commandType: CommandType.Text);
+            }
+            finally
+            {
+                Connection.Close();
+            }
         }
 
         public void BulkInsert(IEnumerable<TEntity> entities, SqlTransaction transaction = null,
@@ -138,6 +216,10 @@ namespace CoreFra.Repository.Dapper
                 Console.WriteLine(ex);
                 throw;
             }
+            finally
+            {
+                Connection.Close();
+            }
         }
 
         public async Task BulkInsertAsync(IEnumerable<TEntity> entities, SqlTransaction transaction = null,
@@ -161,7 +243,8 @@ namespace CoreFra.Repository.Dapper
                     $@"IF OBJECT_ID('tempdb..#{tempToBeInserted}') IS NOT NULL drop table #{tempToBeInserted} SELECT TOP 0 {allPropertiesComputedString} INTO {tempToBeInserted} FROM {tableName} target WITH(NOLOCK);",
                     null, transaction);
 
-                using (var bulkCopy = new SqlBulkCopy((SqlConnection) Connection, SqlBulkCopyOptions.Default, transaction))
+                using (var bulkCopy =
+                    new SqlBulkCopy((SqlConnection) Connection, SqlBulkCopyOptions.Default, transaction))
                 {
                     bulkCopy.BulkCopyTimeout = bulkCopyTimeout;
                     bulkCopy.BatchSize = batchSize;
@@ -181,60 +264,92 @@ namespace CoreFra.Repository.Dapper
                 Console.WriteLine(ex);
                 throw;
             }
+            finally
+            {
+                Connection.Close();
+            }
         }
 
         public void Update(TEntity entity)
         {
-            if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
-                Connection.Open();
+            try
+            {
+                if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
+                    Connection.Open();
 
-            var propertyContainer = DapperHelper.ParseProperties(entity);
-            var sqlIdPairs = DapperHelper.GetSqlPairs(propertyContainer.IdNames);
-            var sqlValuePairs = DapperHelper.GetSqlPairs(propertyContainer.ValueNames);
+                var propertyContainer = DapperHelper.ParseProperties(entity);
+                var sqlIdPairs = DapperHelper.GetSqlPairs(propertyContainer.IdNames);
+                var sqlValuePairs = DapperHelper.GetSqlPairs(propertyContainer.ValueNames);
 
-            var query = $"UPDATE [{_tableName}] SET {sqlValuePairs} WHERE {sqlIdPairs}";
-            Connection.Execute(query, propertyContainer.AllPairs, commandType: CommandType.Text);
+                var query = $"UPDATE [{_tableName}] SET {sqlValuePairs} WHERE {sqlIdPairs}";
+                Connection.Execute(query, propertyContainer.AllPairs, commandType: CommandType.Text);
+            }
+            finally
+            {
+                Connection.Close();
+            }
         }
 
         public async Task UpdateAsync(TEntity entity)
         {
-            if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
-                Connection.Open();
+            try
+            {
+                if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
+                    Connection.Open();
 
-            var propertyContainer = DapperHelper.ParseProperties(entity);
-            var sqlIdPairs = DapperHelper.GetSqlPairs(propertyContainer.IdNames);
-            var sqlValuePairs = DapperHelper.GetSqlPairs(propertyContainer.ValueNames);
+                var propertyContainer = DapperHelper.ParseProperties(entity);
+                var sqlIdPairs = DapperHelper.GetSqlPairs(propertyContainer.IdNames);
+                var sqlValuePairs = DapperHelper.GetSqlPairs(propertyContainer.ValueNames);
 
-            var query = $"UPDATE [{_tableName}] SET {sqlValuePairs} WHERE {sqlIdPairs}";
-            await Connection.ExecuteAsync(query, propertyContainer.AllPairs, commandType: CommandType.Text);
+                var query = $"UPDATE [{_tableName}] SET {sqlValuePairs} WHERE {sqlIdPairs}";
+                await Connection.ExecuteAsync(query, propertyContainer.AllPairs, commandType: CommandType.Text);
+            }
+            finally
+            {
+                Connection.Close();
+            }
         }
 
         public void Delete(int id)
         {
-            var type = typeof(TEntity);
+            try
+            {
+                var type = typeof(TEntity);
 
-            if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
-                Connection.Open();
+                if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
+                    Connection.Open();
 
-            var propertyContainer = DapperHelper.ParseProperties(type);
-            var sqlIdPairs = DapperHelper.GetSqlPairs(propertyContainer.IdNames);
+                var propertyContainer = DapperHelper.ParseProperties(type);
+                var sqlIdPairs = DapperHelper.GetSqlPairs(propertyContainer.IdNames);
 
-            var query = $"DELETE FROM [{_tableName}] WHERE {sqlIdPairs}";
-            Connection.Execute(query, propertyContainer.IdPairs, commandType: CommandType.Text);
+                var query = $"DELETE FROM [{_tableName}] WHERE {sqlIdPairs}";
+                Connection.Execute(query, propertyContainer.IdPairs, commandType: CommandType.Text);
+            }
+            finally
+            {
+                Connection.Close();
+            }
         }
 
         public async Task DeleteAsync(int id)
         {
-            var type = typeof(TEntity);
+            try
+            {
+                var type = typeof(TEntity);
 
-            if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
-                Connection.Open();
+                if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
+                    Connection.Open();
 
-            var propertyContainer = DapperHelper.ParseProperties(type);
-            var sqlIdPairs = DapperHelper.GetSqlPairs(propertyContainer.IdNames);
+                var propertyContainer = DapperHelper.ParseProperties(type);
+                var sqlIdPairs = DapperHelper.GetSqlPairs(propertyContainer.IdNames);
 
-            var query = $"DELETE FROM [{_tableName}] WHERE {sqlIdPairs}";
-            await Connection.ExecuteAsync(query, propertyContainer.IdPairs, commandType: CommandType.Text);
+                var query = $"DELETE FROM [{_tableName}] WHERE {sqlIdPairs}";
+                await Connection.ExecuteAsync(query, propertyContainer.IdPairs, commandType: CommandType.Text);
+            }
+            finally
+            {
+                Connection.Close();
+            }
         }
 
         public void SaveChanges()
