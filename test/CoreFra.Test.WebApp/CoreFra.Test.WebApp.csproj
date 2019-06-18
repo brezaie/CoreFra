@@ -7,8 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EasyCaching.InMemory" Version="0.5.6" />
+    <PackageReference Include="EasyCaching.Interceptor.AspectCore" Version="0.5.6" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\CoreFra.Service\CoreFra.Service.csproj" />
+    <ProjectReference Include="..\..\src\CoreFra.ApiGateway\CoreFra.ApiGateway.csproj" />
+    <ProjectReference Include="..\..\src\CoreFra.Caching\CoreFra.Caching.csproj" />
+    <ProjectReference Include="..\..\src\CoreFra.Common\CoreFra.Common.csproj" />
+    <ProjectReference Include="..\..\src\CoreFra.Domain\CoreFra.Domain.csproj" />
+    <ProjectReference Include="..\..\src\CoreFra.IoC\CoreFra.IoC.csproj" />
+    <ProjectReference Include="..\..\src\CoreFra.Logging\CoreFra.Logging.csproj" />
+    <ProjectReference Include="..\..\src\CoreFra.Repository\CoreFra.Repository.csproj" />
+    <ProjectReference Include="..\CoreFra.Test.Common\CoreFra.Test.Common.csproj" />
   </ItemGroup>
 
 </Project>

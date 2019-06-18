@@ -1,9 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +18,6 @@
     <ProjectReference Include="..\..\src\CoreFra.IoC\CoreFra.IoC.csproj" />
     <ProjectReference Include="..\..\src\CoreFra.Logging\CoreFra.Logging.csproj" />
     <ProjectReference Include="..\..\src\CoreFra.Repository\CoreFra.Repository.csproj" />
-    <ProjectReference Include="..\CoreFra.Test.Common\CoreFra.Test.Common.csproj" />
   </ItemGroup>
 
 </Project>

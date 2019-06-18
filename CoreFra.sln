@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreFra.Service", "CoreFra.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreFra.Common", "src\CoreFra.Common\CoreFra.Common.csproj", "{DE8DD4CC-EBFE-4FB5-9666-8530AD6467B6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreFra.Test.Common", "test\CoreFra.Test.Common\CoreFra.Test.Common.csproj", "{67B8289D-D1E0-4E95-8916-61EDC8DEE915}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,10 @@ Global
 		{DE8DD4CC-EBFE-4FB5-9666-8530AD6467B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE8DD4CC-EBFE-4FB5-9666-8530AD6467B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE8DD4CC-EBFE-4FB5-9666-8530AD6467B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67B8289D-D1E0-4E95-8916-61EDC8DEE915}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67B8289D-D1E0-4E95-8916-61EDC8DEE915}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67B8289D-D1E0-4E95-8916-61EDC8DEE915}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67B8289D-D1E0-4E95-8916-61EDC8DEE915}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -88,6 +94,7 @@ Global
 		{F58EF19C-F808-46E3-B4C7-6610176FB1CF} = {26BD768E-BE96-472F-8D1E-42CC34B7AA43}
 		{7C0E0F78-032D-4356-B739-03C6C745F052} = {26BD768E-BE96-472F-8D1E-42CC34B7AA43}
 		{DE8DD4CC-EBFE-4FB5-9666-8530AD6467B6} = {26BD768E-BE96-472F-8D1E-42CC34B7AA43}
+		{67B8289D-D1E0-4E95-8916-61EDC8DEE915} = {E648364A-2986-4203-A567-979BCEF442D6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1B18BC13-B623-4951-A175-671A7E242F54}

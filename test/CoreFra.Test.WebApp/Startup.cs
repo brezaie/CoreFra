@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreFra.Caching;
+using CoreFra.Test.ConsoleApp;
+using EasyCaching.Interceptor.AspectCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +27,16 @@ namespace CoreFra.Test.WebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(options =>
+                {
+                    options.Filters.Add(typeof(CacheProviderInterceptor));
+                }
+            ).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddTransient(typeof(ICacheProvider), typeof(CacheManagerProvider));
+
+            services.AddScoped(typeof(CachingTestClass));
+            services.ConfigureAspectCoreInterceptor(options => { options.CacheProviderName = "SomeCacheProviderName"; });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

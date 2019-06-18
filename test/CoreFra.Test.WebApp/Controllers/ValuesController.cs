@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreFra.Test.ConsoleApp;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoreFra.Test.WebApp.Controllers
@@ -10,10 +11,19 @@ namespace CoreFra.Test.WebApp.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private readonly CachingTestClass _cachingTestClass;
+
+        public ValuesController(CachingTestClass cachingTestClass)
+        {
+            _cachingTestClass = cachingTestClass;
+        }
+
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
+            var sss = 10;
+            var t = _cachingTestClass.TestString("hiiiiiiiiiii");
             return new string[] { "value1", "value2" };
         }
 
