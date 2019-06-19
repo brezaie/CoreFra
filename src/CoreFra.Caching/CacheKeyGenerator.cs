@@ -12,14 +12,31 @@ namespace CoreFra.Caching
     {
         private const char LinkChar = ':';
 
-        public static string GenerateCacheKey(MethodInfo methodInfo, object[] args)
+        /// <summary>
+        /// args: parametername, parametervalue
+        /// </summary>
+        /// <param name="methodInfo"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static string GenerateCacheKey(MethodInfo methodInfo, Dictionary<object, object> args)
         {
 
             var methodArguments = args?.Any() == true
-                ? args.Select(GenerateCacheKey)
+                ? args.Select(x => GenerateCacheKey(x.Key, x.Value))
                 : new[] { "0" };
 
             return GenerateCacheKey(methodInfo, methodArguments);
+        }
+
+        private static string GenerateCacheKey(object parameter, object value)
+        {
+            if (parameter == null) return string.Empty;
+            if (parameter is ICachable cachable) return $"{cachable.CacheKey}={value}";
+            if (parameter is string key) return $"{key}={value}";
+            if (parameter is DateTime dateTime) return $"{dateTime.ToString("O")}={value}"; ;
+            if (parameter is DateTimeOffset dateTimeOffset) return $"{dateTimeOffset.ToString("O")}={value}";
+            if (parameter is IEnumerable enumerable) return GenerateCacheKey(enumerable.Cast<object>());
+            return parameter.ToString();
         }
 
         private static string GenerateCacheKey(MethodInfo methodInfo, IEnumerable<string> parameters)
@@ -40,16 +57,7 @@ namespace CoreFra.Caching
             return $"{typeName}{LinkChar}{methodName}{LinkChar}";
         }
 
-        private static string GenerateCacheKey(object parameter)
-        {
-            if (parameter == null) return string.Empty;
-            if (parameter is ICachable cachable) return cachable.CacheKey;
-            if (parameter is string key) return key;
-            if (parameter is DateTime dateTime) return dateTime.ToString("O");
-            if (parameter is DateTimeOffset dateTimeOffset) return dateTimeOffset.ToString("O");
-            if (parameter is IEnumerable enumerable) return GenerateCacheKey(enumerable.Cast<object>());
-            return parameter.ToString();
-        }
+        
 
         private static string GenerateCacheKey(IEnumerable<object> parameter)
         {

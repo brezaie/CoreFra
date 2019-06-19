@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AspectCore.DynamicProxy;
@@ -11,6 +12,7 @@ namespace CoreFra.Caching
     {
         private readonly ICacheProvider _cacheProvider;
         public TimeSpan TimeToLive { get; set; }
+        private string _cacheKey;
 
         public CacheManagerInterceptor(ICacheProvider cacheProvider)
         {
@@ -19,12 +21,20 @@ namespace CoreFra.Caching
 
         public void BeforeInvoke(InvocationContext invocationContext)
         {
-            var cacheKey = invocationContext.GetExecutingMethodInfo().GetParameters().Length > 0
-                ? CacheKeyGenerator.GenerateCacheKey(invocationContext.GetExecutingMethodInfo(),
-                    invocationContext.GetExecutingMethodInfo().GetParameters())
+            var argsDictionary = new Dictionary<object, object>();
+            var args = invocationContext.GetExecutingMethodInfo().GetParameters();
+            for (var i = 0; i < args.Length; i++)
+            {
+                var argumentValue = invocationContext.GetParameterValue(i);
+                argsDictionary.Add(args[i], argumentValue);
+            }
+
+            _cacheKey = invocationContext.GetExecutingMethodInfo().GetParameters().Length > 0
+                ? CacheKeyGenerator.GenerateCacheKey(invocationContext.GetExecutingMethodInfo(), argsDictionary)
                 : invocationContext.GetExecutingMethodInfo().Name;
 
-            var doesCacheExist = _cacheProvider.Get(cacheKey);
+
+            var doesCacheExist = _cacheProvider.Get(_cacheKey);
 
             if (doesCacheExist != null)
             {
@@ -36,51 +46,58 @@ namespace CoreFra.Caching
 
         public void AfterInvoke(InvocationContext invocationContext, object methodResult)
         {
-            var attribute = (CacheManagerAttribute) invocationContext.GetExecutingMethodInfo().GetCustomAttributes(true)
-                .FirstOrDefault(x => x.GetType() == typeof(CacheManagerAttribute));
+            //var attribute = (CacheManagerAttribute) invocationContext.GetExecutingMethodInfo().CustomAttributes
+            //    .FirstOrDefault(x => x.AttributeType == typeof(CacheManagerAttribute)).AttributeType;
 
-            var cacheKey = invocationContext.GetExecutingMethodInfo().GetParameters().Length > 0
-                ? CacheKeyGenerator.GenerateCacheKey(invocationContext.GetExecutingMethodInfo(),
-                    invocationContext.GetExecutingMethodInfo().GetParameters())
-                : invocationContext.GetExecutingMethodInfo().Name;
+            var argsDictionary = new Dictionary<object, object>();
+            var args = invocationContext.GetExecutingMethodInfo().GetParameters();
+            for (var i = 0; i < args.Length; i++)
+            {
+                var argumentValue = invocationContext.GetParameterValue(i);
+                argsDictionary.Add(args[i], argumentValue);
+            }
 
-            if (attribute.TimeToLive != null && attribute.TimeToLive > TimeSpan.Zero)
-                _cacheProvider.AddOrUpdate(cacheKey, methodResult, attribute.TimeToLive);
-            else
-                _cacheProvider.AddOrUpdate(cacheKey, methodResult);
+            //var cacheKey = invocationContext.GetExecutingMethodInfo().GetParameters().Length > 0
+            //    ? CacheKeyGenerator.GenerateCacheKey(invocationContext.GetExecutingMethodInfo(), argsDictionary)
+            //    : invocationContext.GetExecutingMethodInfo().Name;
+
+            //if (attribute.TimeToLive != null && attribute.TimeToLive > TimeSpan.Zero)
+            //    _cacheProvider.AddOrUpdate(cacheKey, methodResult, attribute.TimeToLive);
+            //else
+                _cacheProvider.AddOrUpdate(_cacheKey, methodResult);
 
 
             // Save the result to the MemoryCache
             //this.memoryCache.Set(invocationContext.GetExecutingMethodName(), methodResult);
         }
 
-        public async Task Invoke(AspectContext context, AspectDelegate next)
-        {
-            var attribute = (CacheManagerInterceptor)context.ServiceMethod.GetCustomAttributes(true)
-                .FirstOrDefault(x => x.GetType() == typeof(CacheManagerInterceptor));
-            if (attribute == null)
-                await next(context);
+        //public async Task Invoke(AspectContext context, AspectDelegate next)
+        //{
+        //    var attribute = (CacheManagerInterceptor)context.ServiceMethod.GetCustomAttributes(true)
+        //        .FirstOrDefault(x => x.GetType() == typeof(CacheManagerInterceptor));
+        //    if (attribute == null)
+        //        await next(context);
 
-            var cacheKey = context.Parameters.Length > 0
-                ? CacheKeyGenerator.GenerateCacheKey(context.ServiceMethod, context.Parameters)
-                : context.ServiceMethod.Name;
+        //    var cacheKey = context.Parameters.Length > 0
+        //        ? CacheKeyGenerator.GenerateCacheKey(context.ServiceMethod, context.Parameters)
+        //        : context.ServiceMethod.Name;
 
-            var doesCacheExist = _cacheProvider.Get(cacheKey);
-            if (doesCacheExist != null)
-            {
-                context.ReturnValue = doesCacheExist;
-            }
+        //    var doesCacheExist = _cacheProvider.Get(cacheKey);
+        //    if (doesCacheExist != null)
+        //    {
+        //        context.ReturnValue = doesCacheExist;
+        //    }
 
-            await next(context);
+        //    await next(context);
 
-            if (context.ReturnValue != null)
-            {
-                if (attribute.TimeToLive != null && attribute.TimeToLive > TimeSpan.Zero)
-                    _cacheProvider.AddOrUpdate(cacheKey, context.ReturnValue, attribute.TimeToLive);
-                else
-                    _cacheProvider.AddOrUpdate(cacheKey, context.ReturnValue);
-            }
-        }
+        //    if (context.ReturnValue != null)
+        //    {
+        //        if (attribute.TimeToLive != null && attribute.TimeToLive > TimeSpan.Zero)
+        //            _cacheProvider.AddOrUpdate(cacheKey, context.ReturnValue, attribute.TimeToLive);
+        //        else
+        //            _cacheProvider.AddOrUpdate(cacheKey, context.ReturnValue);
+        //    }
+        //}
 
 
      

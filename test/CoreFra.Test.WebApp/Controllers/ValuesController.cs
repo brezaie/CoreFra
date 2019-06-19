@@ -23,7 +23,7 @@ namespace CoreFra.Test.WebApp.Controllers
         public ActionResult<IEnumerable<string>> Get()
         {
             var sss = 10;
-            var t = _cachingTest.TestString("hiiiiiiiiiii");
+            var t = _cachingTest.TestString("byyyyeeeee", new List<int>{1, 2, 3, 4, 5});
             return new string[] { "value1", "value2" };
         }
 
