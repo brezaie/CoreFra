@@ -11,11 +11,11 @@ namespace CoreFra.Test.WebApp.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        private readonly CachingTestClass _cachingTestClass;
+        private readonly ICachingTest _cachingTest;
 
-        public ValuesController(CachingTestClass cachingTestClass)
+        public ValuesController(ICachingTest cachingTest)
         {
-            _cachingTestClass = cachingTestClass;
+            _cachingTest = cachingTest;
         }
 
         // GET api/values
@@ -23,7 +23,7 @@ namespace CoreFra.Test.WebApp.Controllers
         public ActionResult<IEnumerable<string>> Get()
         {
             var sss = 10;
-            var t = _cachingTestClass.TestString("hiiiiiiiiiii");
+            var t = _cachingTest.TestString("hiiiiiiiiiii");
             return new string[] { "value1", "value2" };
         }
 

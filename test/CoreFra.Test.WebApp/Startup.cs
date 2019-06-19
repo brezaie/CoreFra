@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using AspectCore.Extensions.DependencyInjection;
 using CoreFra.Caching;
 using CoreFra.Test.ConsoleApp;
-using EasyCaching.Interceptor.AspectCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using AspectCore.Injector;
+using SimpleProxy.Extensions;
 
 namespace CoreFra.Test.WebApp
 {
@@ -27,16 +24,32 @@ namespace CoreFra.Test.WebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(options =>
+            try
+            {
+                services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+                //services.ConfigureAspectCoreInterceptor(options => { options.CacheProviderName = "SomeCacheProviderName"; });
+
+                //services.ConfigureAspectCoreInterceptor(options => options.CacheProviderName = "first");
+
+                services.AddSingleton< ICacheProvider, CacheManagerProvider>();
+
+                services.EnableSimpleProxy(p =>
                 {
-                    options.Filters.Add(typeof(CacheProviderInterceptor));
-                }
-            ).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                    p.AddInterceptor<CacheManagerAttribute, CacheManagerInterceptor>();
+                });
 
-            services.AddTransient(typeof(ICacheProvider), typeof(CacheManagerProvider));
+                services.AddTransientWithProxy<ICachingTest, CachingTest>();
 
-            services.AddScoped(typeof(CachingTestClass));
-            services.ConfigureAspectCoreInterceptor(options => { options.CacheProviderName = "SomeCacheProviderName"; });
+                //var container = services.ToServiceContainer();
+                //container.Build();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

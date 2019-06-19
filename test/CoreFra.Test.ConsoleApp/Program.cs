@@ -16,10 +16,10 @@ namespace CoreFra.Test.ConsoleApp
             var serviceProvider = new ServiceCollection()
                 .AddSingleton<IConfiguration>(Configuration)
                 .AddTransient(typeof(ICacheProvider), typeof(CacheManagerProvider))
-                .AddSingleton<CacheProviderInterceptor>()
-                .AddMvcCore(x => x.Filters.Add(typeof(CacheProviderInterceptor)));
+                .AddSingleton<CacheManagerInterceptor>()
+                .AddMvcCore(x => x.Filters.Add(typeof(CacheManagerInterceptor)));
 
-            var test = new CachingTestClass();
+            var test = new CachingTest();
             var res = test.TestString("hiiiiiiii");
 
 

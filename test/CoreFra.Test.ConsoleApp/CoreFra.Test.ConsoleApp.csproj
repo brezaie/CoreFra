@@ -7,8 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AspectCore.Abstractions" Version="1.2.0" />
+    <PackageReference Include="AspectCore.Core" Version="1.2.0" />
+    <PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="1.2.0" />
     <PackageReference Include="EasyCaching.InMemory" Version="0.5.6" />
     <PackageReference Include="EasyCaching.Interceptor.AspectCore" Version="0.5.6" />
+    <PackageReference Include="SimpleProxy" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>

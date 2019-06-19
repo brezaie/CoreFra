@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CoreFra.Test.ConsoleApp
 {
-    public class CachingTestClass
+    public class CachingTest : ICachingTest
     {
-        [TypeFilter(typeof(CacheProviderInterceptor))]
-        public virtual string TestString(string hello)
+        [CacheManager]
+        public string TestString(string hello)
         {
             return "Hello";
         }
