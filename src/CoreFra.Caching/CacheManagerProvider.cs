@@ -65,7 +65,8 @@ namespace CoreFra.Caching
 
             if (!timeToLive.HasValue) return;
 
-            var localTime = DateTime.Now.AddMilliseconds(timeToLive.Value.Milliseconds);
+
+            var localTime = DateTime.Now.AddSeconds(timeToLive.Value.TotalSeconds);
             DateTimeOffset? date = new DateTimeOffset(localTime, TimeZoneInfo.Local.GetUtcOffset(localTime));
             _cacheManager.Expire(key, date.Value);
         }
@@ -76,7 +77,7 @@ namespace CoreFra.Caching
 
             if (!timeToLive.HasValue) return;
 
-            var localTime = DateTime.Now.AddMilliseconds(timeToLive.Value.Milliseconds);
+            var localTime = DateTime.Now.AddSeconds(timeToLive.Value.TotalSeconds);
             DateTimeOffset? date = new DateTimeOffset(localTime, TimeZoneInfo.Local.GetUtcOffset(localTime));
             _cacheManager.Expire(key, region, date.Value);
         }

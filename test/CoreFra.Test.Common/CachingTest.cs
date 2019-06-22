@@ -8,7 +8,7 @@ namespace CoreFra.Test.ConsoleApp
 {
     public class CachingTest : ICachingTest
     {
-        [CacheManager]
+        [CacheManager(Second = 10)]
         public string TestString(string hello, List<int> intList, DateTime? date, PagedCollection<string> st)
         {
             return "Hello";

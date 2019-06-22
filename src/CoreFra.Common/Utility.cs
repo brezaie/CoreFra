@@ -15,5 +15,10 @@ namespace CoreFra.Common
 
             return false;
         }
+
+        //public static int ConvertTimeSpanToSeconds(this TimeSpan timeSpan)
+        //{
+        //    var seconds = timeSpan.
+        //}
     }
 }
