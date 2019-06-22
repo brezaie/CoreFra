@@ -21,12 +21,13 @@ namespace CoreFra.Caching
 
         public void BeforeInvoke(InvocationContext invocationContext)
         {
-            var argsDictionary = new Dictionary<object, object>();
+            var argsDictionary = new Dictionary<string, object>();
             var args = invocationContext.GetExecutingMethodInfo().GetParameters();
             for (var i = 0; i < args.Length; i++)
             {
                 var argumentValue = invocationContext.GetParameterValue(i);
-                argsDictionary.Add(args[i], argumentValue);
+                var argumentName = args[i].Name;
+                argsDictionary.Add(argumentName, argumentValue);
             }
 
             _cacheKey = invocationContext.GetExecutingMethodInfo().GetParameters().Length > 0
@@ -46,8 +47,11 @@ namespace CoreFra.Caching
 
         public void AfterInvoke(InvocationContext invocationContext, object methodResult)
         {
-            //var attribute = (CacheManagerAttribute) invocationContext.GetExecutingMethodInfo().CustomAttributes
-            //    .FirstOrDefault(x => x.AttributeType == typeof(CacheManagerAttribute)).AttributeType;
+            var attribute = invocationContext.GetExecutingMethodInfo()
+                .GetCustomAttributes(typeof(CacheManagerAttribute), true).FirstOrDefault();
+
+            var conv = (CacheManagerAttribute) attribute;
+
 
             var argsDictionary = new Dictionary<object, object>();
             var args = invocationContext.GetExecutingMethodInfo().GetParameters();

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using CoreFra.Common;
 using EasyCaching.Core.Interceptor;
 
 namespace CoreFra.Caching
@@ -11,6 +12,10 @@ namespace CoreFra.Caching
     public static class CacheKeyGenerator
     {
         private const char LinkChar = ':';
+        private const char SepChar = ',';
+        private const char UnderlineChar = '_';
+        private const char OpenBracketChar = '{';
+        private const char CloseBracketChar = '}';
 
         /// <summary>
         /// args: parametername, parametervalue
@@ -18,7 +23,7 @@ namespace CoreFra.Caching
         /// <param name="methodInfo"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public static string GenerateCacheKey(MethodInfo methodInfo, Dictionary<object, object> args)
+        public static string GenerateCacheKey(MethodInfo methodInfo, Dictionary<string, object> args)
         {
 
             var methodArguments = args?.Any() == true
@@ -28,15 +33,31 @@ namespace CoreFra.Caching
             return GenerateCacheKey(methodInfo, methodArguments);
         }
 
-        private static string GenerateCacheKey(object parameter, object value)
+        private static string GenerateCacheKey(string parameterName, object value)
         {
-            if (parameter == null) return string.Empty;
-            if (parameter is ICachable cachable) return $"{cachable.CacheKey}={value}";
-            if (parameter is string key) return $"{key}={value}";
-            if (parameter is DateTime dateTime) return $"{dateTime.ToString("O")}={value}"; ;
-            if (parameter is DateTimeOffset dateTimeOffset) return $"{dateTimeOffset.ToString("O")}={value}";
-            if (parameter is IEnumerable enumerable) return GenerateCacheKey(enumerable.Cast<object>());
-            return parameter.ToString();
+            if (value == null)
+                return $"{parameterName}{LinkChar}{OpenBracketChar}{null}{CloseBracketChar}";
+
+            if (value.IsBasicType())
+                return $"{parameterName}{LinkChar}{OpenBracketChar}{value.GetType()}{SepChar}{value}{CloseBracketChar}";
+
+            if (value is IEnumerable enumerable)
+                return $"{parameterName}{LinkChar}{OpenBracketChar}{typeof(IEnumerable)}{SepChar}{GenerateCacheKey(enumerable.Cast<object>())}{CloseBracketChar}";
+
+            var customTypeKeyBuilder = new StringBuilder();
+            var customType = value.GetType();
+            var properties = customType.GetProperties();
+            foreach (var property in properties)
+            {
+                var info = property.GetValue(value);
+                var name = property.Name;
+
+                customTypeKeyBuilder = customTypeKeyBuilder.Append(GenerateCacheKey(name, info) + SepChar);
+            }
+
+            customTypeKeyBuilder.Remove(customTypeKeyBuilder.Length - 1, 1);
+
+            return $"{parameterName}{LinkChar}{OpenBracketChar}{customTypeKeyBuilder}{CloseBracketChar}";
         }
 
         private static string GenerateCacheKey(MethodInfo methodInfo, IEnumerable<string> parameters)
@@ -45,7 +66,8 @@ namespace CoreFra.Caching
 
             var builder = new StringBuilder();
             builder.Append(cacheKeyPrefix);
-            builder.Append(string.Join(LinkChar.ToString(), parameters));
+            builder.Append(string.Join(SepChar.ToString(), parameters));
+            builder.Append(CloseBracketChar);
             return builder.ToString();
         }
 
@@ -54,7 +76,7 @@ namespace CoreFra.Caching
             var typeName = methodInfo.DeclaringType?.Name;
             var methodName = methodInfo.Name;
 
-            return $"{typeName}{LinkChar}{methodName}{LinkChar}";
+            return $"{typeName}{UnderlineChar}{methodName}{LinkChar}{OpenBracketChar}";
         }
 
         

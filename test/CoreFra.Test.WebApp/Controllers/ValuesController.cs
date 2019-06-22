@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreFra.Domain;
 using CoreFra.Test.ConsoleApp;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,7 +24,14 @@ namespace CoreFra.Test.WebApp.Controllers
         public ActionResult<IEnumerable<string>> Get()
         {
             var sss = 10;
-            var t = _cachingTest.TestString("byyyyeeeee", new List<int>{1, 2, 3, 4, 5});
+            var t = _cachingTest.TestString("byyyyeeeee", new List<int>{1, 2, 3, 4, 5}, null, new PagedCollection<string>
+            {
+                List = new List<string> { "a", "b"},
+                PageNumber = 1,
+                PageSize = 1,
+                TotalCount = 2
+            });
+
             return new string[] { "value1", "value2" };
         }
 
