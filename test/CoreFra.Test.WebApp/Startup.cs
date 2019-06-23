@@ -31,6 +31,12 @@ namespace CoreFra.Test.WebApp
 
                 services.AddSingleton<ICustomLogger, SeriLogger>();
 
+                services.AddSingleton<IAuditorProvider, ElasticAuditorProvider>();
+                services.EnableSimpleProxy(p =>
+                {
+                    p.AddInterceptor<AuditorAttribute, AuditorInterceptor>();
+                });
+
                 #region Caching
 
                 services.ConfigureSimpleProxyInterceptor();
