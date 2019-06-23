@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CoreFra.Logging
 {
-    public class SeriLogger : ILogger
+    public class SeriLogger : ICustomLogger
     {
         private static ILogger<SeriLogger> _logger;
 

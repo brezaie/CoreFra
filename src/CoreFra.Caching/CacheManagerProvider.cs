@@ -14,10 +14,6 @@ namespace CoreFra.Caching
                 CacheFactory.Build<object>(
                     s =>
                         s.WithDictionaryHandle()
-                            //.WithMicrosoftLogging(log =>
-                            //{
-                            //    log.AddConsole(LogLevel.Trace);
-                            //})
                             .EnablePerformanceCounters()
                             .EnableStatistics()
                             .Build()

@@ -20,7 +20,7 @@ namespace CoreFra.Test.ConsoleApp
                 .AddMvcCore(x => x.Filters.Add(typeof(CacheManagerInterceptor)));
 
             var test = new CachingTest();
-            var res = test.TestString("hiiiiiiii");
+            //var res = test.TestString("hiiiiiiii");
 
 
             Console.WriteLine("Hello World!");

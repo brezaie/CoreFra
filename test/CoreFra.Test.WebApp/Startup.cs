@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using AspectCore.Injector;
+using CoreFra.Caching.Extensions;
+using CoreFra.Logging;
 using SimpleProxy.Extensions;
 
 namespace CoreFra.Test.WebApp
@@ -21,28 +23,20 @@ namespace CoreFra.Test.WebApp
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             try
             {
                 services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-                //services.ConfigureAspectCoreInterceptor(options => { options.CacheProviderName = "SomeCacheProviderName"; });
+                services.AddSingleton<ICustomLogger, SeriLogger>();
 
-                //services.ConfigureAspectCoreInterceptor(options => options.CacheProviderName = "first");
+                #region Caching
 
-                services.AddSingleton< ICacheProvider, CacheManagerProvider>();
-
-                services.EnableSimpleProxy(p =>
-                {
-                    p.AddInterceptor<CacheManagerAttribute, CacheManagerInterceptor>();
-                });
-
+                services.ConfigureSimpleProxyInterceptor();
                 services.AddTransientWithProxy<ICachingTest, CachingTest>();
 
-                //var container = services.ToServiceContainer();
-                //container.Build();
+                #endregion
             }
             catch (Exception ex)
             {
@@ -52,7 +46,6 @@ namespace CoreFra.Test.WebApp
 
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())

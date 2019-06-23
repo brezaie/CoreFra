@@ -6,7 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="SimpleProxy" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CoreFra.Common\CoreFra.Common.csproj" />
+    <ProjectReference Include="..\CoreFra.Domain\CoreFra.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
