@@ -45,7 +45,7 @@ namespace CoreFra.Logging
                 {
                     Id = Guid.NewGuid(),
                     Input = JsonConvert.SerializeObject(argsDictionary),
-                    OutPut = JsonConvert.SerializeObject(methodResult),
+                    Output = JsonConvert.SerializeObject(methodResult),
                     ClassName = methodInfo.Module.ToString(),
                     MethodName = methodInfo.Name,
                     StartTime = _startTime,

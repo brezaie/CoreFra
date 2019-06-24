@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using AspectCore.Injector;
 using CoreFra.Caching.Extensions;
+using CoreFra.Domain;
 using CoreFra.Logging;
 using SimpleProxy.Extensions;
 
@@ -31,7 +32,17 @@ namespace CoreFra.Test.WebApp
 
                 services.AddSingleton<ICustomLogger, SeriLogger>();
 
-                services.AddSingleton<IAuditorProvider, ElasticAuditorProvider>();
+                var elasticSearchUrl = Configuration["ElasticSearch:Url"];
+                var elasticSearchUsername = Configuration["ElasticSearch:UserName"];
+                var elasticSearchPassword = Configuration["ElasticSearch:Password"];
+                var elasticSearchIndexName = Configuration["ElasticSearch:IndexFormat"];
+                services.AddTransient<IAuditorProvider>(s => new ElasticAuditorProvider(new ElasticSetting
+                {
+                    ConnectionString = elasticSearchUrl,
+                    Username = elasticSearchUsername,
+                    Password = elasticSearchPassword,
+                    IndexFormat = elasticSearchIndexName
+                }));
                 services.EnableSimpleProxy(p =>
                 {
                     p.AddInterceptor<AuditorAttribute, AuditorInterceptor>();
