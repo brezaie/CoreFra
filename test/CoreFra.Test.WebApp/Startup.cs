@@ -48,13 +48,13 @@ namespace CoreFra.Test.WebApp
                     IndexFormat = elasticSearchIndexName
                 };
 
-                services.ConfigureSimpleProxyAuditorInterceptor(elasticSetting);
+                services.ConfigureSimpleProxyAuditorInterceptor().AddElasticProvider(elasticSetting);
 
                 #endregion
 
                 #region Caching
 
-                services.ConfigureSimpleProxyCacheManagerInterceptor();
+                services.ConfigureSimpleProxyCacheManagerInterceptor().AddCacheManager();
 
                 #endregion
 
