@@ -11,6 +11,7 @@ using AspectCore.Injector;
 using CoreFra.Caching.Extensions;
 using CoreFra.Domain;
 using CoreFra.Logging;
+using CoreFra.Logging.Extensions;
 using SimpleProxy.Extensions;
 
 namespace CoreFra.Test.WebApp
@@ -32,28 +33,37 @@ namespace CoreFra.Test.WebApp
 
                 services.AddSingleton<ICustomLogger, SeriLogger>();
 
+                #region Auditor
+
                 var elasticSearchUrl = Configuration["ElasticSearch:Url"];
                 var elasticSearchUsername = Configuration["ElasticSearch:UserName"];
                 var elasticSearchPassword = Configuration["ElasticSearch:Password"];
                 var elasticSearchIndexName = Configuration["ElasticSearch:IndexFormat"];
-                services.AddTransient<IAuditorProvider>(s => new ElasticAuditorProvider(new ElasticSetting
+                
+                var elasticSetting = new ElasticSetting
                 {
                     ConnectionString = elasticSearchUrl,
                     Username = elasticSearchUsername,
                     Password = elasticSearchPassword,
                     IndexFormat = elasticSearchIndexName
-                }));
-                services.EnableSimpleProxy(p =>
-                {
-                    p.AddInterceptor<AuditorAttribute, AuditorInterceptor>();
-                });
+                };
+
+                services.ConfigureSimpleProxyAuditorInterceptor(elasticSetting);
+
+                #endregion
 
                 #region Caching
 
-                services.ConfigureSimpleProxyInterceptor();
+                services.ConfigureSimpleProxyCacheManagerInterceptor();
+
+                #endregion
+
+                #region SimpleProxy
+
                 services.AddTransientWithProxy<ICachingTest, CachingTest>();
 
                 #endregion
+
             }
             catch (Exception ex)
             {

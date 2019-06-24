@@ -4,9 +4,9 @@ using SimpleProxy.Extensions;
 
 namespace CoreFra.Caching.Extensions
 {
-    public static class SimpleProxyInterceptorServiceCollectionExtension
+    public static class SimpleProxyCacheManagerInterceptorServiceCollectionExtension
     {
-        public static IServiceCollection ConfigureSimpleProxyInterceptor(this IServiceCollection services)
+        public static IServiceCollection ConfigureSimpleProxyCacheManagerInterceptor(this IServiceCollection services)
         {
             try
             {
