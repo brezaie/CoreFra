@@ -19,7 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\CoreFra.Service\CoreFra.Service.csproj" />
     <ProjectReference Include="..\..\src\CoreFra.Agent\CoreFra.Agent.csproj" />
     <ProjectReference Include="..\..\src\CoreFra.ApiGateway\CoreFra.ApiGateway.csproj" />
     <ProjectReference Include="..\..\src\CoreFra.Caching\CoreFra.Caching.csproj" />

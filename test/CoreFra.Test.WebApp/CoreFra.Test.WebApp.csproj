@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\CoreFra.Service\CoreFra.Service.csproj" />
     <ProjectReference Include="..\..\src\CoreFra.ApiGateway\CoreFra.ApiGateway.csproj" />
     <ProjectReference Include="..\..\src\CoreFra.Caching\CoreFra.Caching.csproj" />
     <ProjectReference Include="..\..\src\CoreFra.Common\CoreFra.Common.csproj" />
@@ -24,6 +23,7 @@
     <ProjectReference Include="..\..\src\CoreFra.IoC\CoreFra.IoC.csproj" />
     <ProjectReference Include="..\..\src\CoreFra.Logging\CoreFra.Logging.csproj" />
     <ProjectReference Include="..\..\src\CoreFra.Repository\CoreFra.Repository.csproj" />
+    <ProjectReference Include="..\..\src\CoreFra.Service\CoreFra.Service.csproj" />
     <ProjectReference Include="..\CoreFra.Test.Common\CoreFra.Test.Common.csproj" />
   </ItemGroup>
 
