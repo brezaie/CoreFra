@@ -36,24 +36,19 @@ namespace CoreFra.Common
 
         public static string SafeString(this object i)
         {
-            if (i != null)
-                return i.ToString();
-            return (string)null;
+            return i?.ToString();
         }
 
         public static string SafeString(this object i, bool isEmpty)
         {
-            if (i != null)
-                return i.ToString();
-            return string.Empty;
+            return i != null ? i.ToString() : string.Empty;
         }
 
         public static DateTime SafeDateTime(this object d)
         {
             if (d == null)
                 return new DateTime(1907, 1, 1);
-            DateTime result;
-            DateTime.TryParse(d.SafeString(), out result);
+            DateTime.TryParse(d.SafeString(), out var result);
             return result;
         }
 
@@ -61,8 +56,7 @@ namespace CoreFra.Common
         {
             if (d == null)
                 return TimeSpan.MinValue;
-            TimeSpan result;
-            TimeSpan.TryParse(d.SafeString(), out result);
+            TimeSpan.TryParse(d.SafeString(), out var result);
             return result;
         }
 
@@ -78,8 +72,7 @@ namespace CoreFra.Common
         {
             if (d == null)
                 return Guid.Empty;
-            Guid result;
-            Guid.TryParse(d.ToString(), out result);
+            Guid.TryParse(d.ToString(), out var result);
             return result;
         }
 
@@ -113,8 +106,7 @@ namespace CoreFra.Common
 
         public static double SafeDouble(this object i)
         {
-            double result;
-            double.TryParse(i.SafeString(), NumberStyles.Any, (IFormatProvider)CultureInfo.InvariantCulture, out result);
+            double.TryParse(i.SafeString(), NumberStyles.Any, CultureInfo.InvariantCulture, out var result);
             return result;
         }
 
@@ -127,15 +119,13 @@ namespace CoreFra.Common
 
         public static short SafeInt16(this object i)
         {
-            short result;
-            short.TryParse(i.SafeString(), out result);
+            short.TryParse(i.SafeString(), out var result);
             return result;
         }
 
-        public static Decimal SafeDecimal(this object i)
+        public static decimal SafeDecimal(this object i)
         {
-            Decimal result;
-            Decimal.TryParse(i.SafeString(), out result);
+            decimal.TryParse(i.SafeString(), out var result);
             return result;
         }
 
