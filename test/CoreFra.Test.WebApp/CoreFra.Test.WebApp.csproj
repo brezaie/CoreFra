@@ -10,7 +10,9 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="NEST" Version="6.8.0" />
+    <PackageReference Include="Quartz" Version="3.0.7" />
     <PackageReference Include="SimpleProxy" Version="1.0.1" />
+    <PackageReference Include="Topshelf" Version="4.2.0" />
   </ItemGroup>
 
   <ItemGroup>

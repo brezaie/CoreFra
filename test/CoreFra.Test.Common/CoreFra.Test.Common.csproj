@@ -11,11 +11,14 @@
     <PackageReference Include="EasyCaching.InMemory" Version="0.5.6" />
     <PackageReference Include="EasyCaching.Interceptor.AspectCore" Version="0.5.6" />
     <PackageReference Include="NEST" Version="6.8.0" />
+    <PackageReference Include="Quartz" Version="3.0.7" />
     <PackageReference Include="SimpleProxy" Version="1.0.1" />
+    <PackageReference Include="Topshelf" Version="4.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\CoreFra.Service\CoreFra.Service.csproj" />
+    <ProjectReference Include="..\..\src\CoreFra.Agent\CoreFra.Agent.csproj" />
     <ProjectReference Include="..\..\src\CoreFra.ApiGateway\CoreFra.ApiGateway.csproj" />
     <ProjectReference Include="..\..\src\CoreFra.Caching\CoreFra.Caching.csproj" />
     <ProjectReference Include="..\..\src\CoreFra.Common\CoreFra.Common.csproj" />
