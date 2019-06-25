@@ -12,6 +12,10 @@ using CoreFra.Caching.Extensions;
 using CoreFra.Domain;
 using CoreFra.Logging;
 using CoreFra.Logging.Extensions;
+using CoreFra.Repository;
+using CoreFra.Repository.Dapper;
+using CoreFra.Service;
+using CoreFra.Test.Common;
 using SimpleProxy.Extensions;
 
 namespace CoreFra.Test.WebApp
@@ -31,7 +35,14 @@ namespace CoreFra.Test.WebApp
             {
                 services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+                #region Logger
+
                 services.AddSingleton<ICustomLogger, SeriLogger>();
+
+
+                #endregion
+
+                #region Interceptors
 
                 #region Auditor
 
@@ -63,6 +74,25 @@ namespace CoreFra.Test.WebApp
                 services.AddTransientWithProxy<ICachingTest, CachingTest>();
 
                 #endregion
+
+                #endregion
+
+                #region DapperRepository
+
+                var connectionString = Configuration.GetConnectionString("DefaultConnection");
+                services.AddSingleton<IDapperConnectionFactory>(s => new SampleDapperConnectionFactory(connectionString));
+                services.AddTransient(typeof(IGenericRepository<>), typeof(DapperGenericRepository<>));
+                services.AddTransient<ITestRepository, TestRepository>();
+
+                #endregion
+
+                #region Services
+
+                services.AddTransient(typeof(IGenericService<>), typeof(GenericService<,>));
+                services.AddTransient<ITestService, TestService>();
+
+                #endregion
+
 
             }
             catch (Exception ex)

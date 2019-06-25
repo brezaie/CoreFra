@@ -19,7 +19,7 @@ namespace CoreFra.Repository.Dapper
 
         #region PrivateProperties
 
-        private readonly string _tableName;
+        protected readonly string TableName;
 
         #endregion
 
@@ -31,7 +31,7 @@ namespace CoreFra.Repository.Dapper
             Compiler = new SqlServerCompiler();
             QueryFactory = new QueryFactory(Connection, Compiler);
 
-            _tableName = typeof(TEntity).Name;
+            TableName = typeof(TEntity).Name;
         }
 
         #endregion
@@ -40,7 +40,7 @@ namespace CoreFra.Repository.Dapper
         {
             try
             {
-                var query = $"SELECT * FROM {_tableName}";
+                var query = $"SELECT * FROM {TableName}";
 
                 if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
                     Connection.Open();
@@ -57,7 +57,7 @@ namespace CoreFra.Repository.Dapper
         {
             try
             {
-                var query = $"SELECT * FROM {_tableName}";
+                var query = $"SELECT * FROM {TableName}";
 
                 if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
                     Connection.Open();
@@ -79,7 +79,7 @@ namespace CoreFra.Repository.Dapper
                 if (pageSize <= 0)
                     pageSize = 10;
 
-                var lst = QueryFactory.Query(_tableName).PaginateAsync<TEntity>(pageNumber, pageSize).Result;
+                var lst = QueryFactory.Query(TableName).PaginateAsync<TEntity>(pageNumber, pageSize).Result;
 
                 var res = new PagedCollection<TEntity>
                 {
@@ -102,7 +102,7 @@ namespace CoreFra.Repository.Dapper
         {
             try
             {
-                var query = $"SELECT * FROM {_tableName} WHERE Id = @Id";
+                var query = $"SELECT * FROM {TableName} WHERE Id = @Id";
 
                 if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
                     Connection.Open();
@@ -120,7 +120,7 @@ namespace CoreFra.Repository.Dapper
         {
             try
             {
-                var query = $"SELECT * FROM {_tableName} WHERE Id = @Id";
+                var query = $"SELECT * FROM {TableName} WHERE Id = @Id";
 
                 if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
                     Connection.Open();
@@ -143,7 +143,7 @@ namespace CoreFra.Repository.Dapper
 
                 var propertyContainer = DapperHelper.ParseProperties(entity);
                 var query =
-                    $"INSERT INTO [{_tableName}] ({string.Join(", ", propertyContainer.ValueNames)}) " +
+                    $"INSERT INTO [{TableName}] ({string.Join(", ", propertyContainer.ValueNames)}) " +
                     $"VALUES(@{string.Join(", @", propertyContainer.ValueNames.Select(x => x.Replace("[", "").Replace("]", "")))})";
 
                 Connection.Execute(query, propertyContainer.AllPairs, commandType: CommandType.Text);
@@ -163,7 +163,7 @@ namespace CoreFra.Repository.Dapper
 
                 var propertyContainer = DapperHelper.ParseProperties(entity);
                 var query =
-                    $"INSERT INTO [{_tableName}] ({string.Join(", ", propertyContainer.ValueNames)}) " +
+                    $"INSERT INTO [{TableName}] ({string.Join(", ", propertyContainer.ValueNames)}) " +
                     $"VALUES(@{string.Join(", @", propertyContainer.ValueNames.Select(x => x.Replace("[", "").Replace("]", "")))})";
 
                 await Connection.ExecuteAsync(query, propertyContainer.AllPairs, commandType: CommandType.Text);
@@ -281,7 +281,7 @@ namespace CoreFra.Repository.Dapper
                 var sqlIdPairs = DapperHelper.GetSqlPairs(propertyContainer.IdNames);
                 var sqlValuePairs = DapperHelper.GetSqlPairs(propertyContainer.ValueNames);
 
-                var query = $"UPDATE [{_tableName}] SET {sqlValuePairs} WHERE {sqlIdPairs}";
+                var query = $"UPDATE [{TableName}] SET {sqlValuePairs} WHERE {sqlIdPairs}";
                 Connection.Execute(query, propertyContainer.AllPairs, commandType: CommandType.Text);
             }
             finally
@@ -301,7 +301,7 @@ namespace CoreFra.Repository.Dapper
                 var sqlIdPairs = DapperHelper.GetSqlPairs(propertyContainer.IdNames);
                 var sqlValuePairs = DapperHelper.GetSqlPairs(propertyContainer.ValueNames);
 
-                var query = $"UPDATE [{_tableName}] SET {sqlValuePairs} WHERE {sqlIdPairs}";
+                var query = $"UPDATE [{TableName}] SET {sqlValuePairs} WHERE {sqlIdPairs}";
                 await Connection.ExecuteAsync(query, propertyContainer.AllPairs, commandType: CommandType.Text);
             }
             finally
@@ -322,7 +322,7 @@ namespace CoreFra.Repository.Dapper
                 var propertyContainer = DapperHelper.ParseProperties(type);
                 var sqlIdPairs = DapperHelper.GetSqlPairs(propertyContainer.IdNames);
 
-                var query = $"DELETE FROM [{_tableName}] WHERE {sqlIdPairs}";
+                var query = $"DELETE FROM [{TableName}] WHERE {sqlIdPairs}";
                 Connection.Execute(query, propertyContainer.IdPairs, commandType: CommandType.Text);
             }
             finally
@@ -343,7 +343,7 @@ namespace CoreFra.Repository.Dapper
                 var propertyContainer = DapperHelper.ParseProperties(type);
                 var sqlIdPairs = DapperHelper.GetSqlPairs(propertyContainer.IdNames);
 
-                var query = $"DELETE FROM [{_tableName}] WHERE {sqlIdPairs}";
+                var query = $"DELETE FROM [{TableName}] WHERE {sqlIdPairs}";
                 await Connection.ExecuteAsync(query, propertyContainer.IdPairs, commandType: CommandType.Text);
             }
             finally

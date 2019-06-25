@@ -9,7 +9,12 @@ namespace CoreFra.Service
     public class GenericService<TEntity, TRepository> : IGenericService<TEntity> where TEntity : class
         where TRepository : IGenericRepository<TEntity>
     {
-        private TRepository Repository { get; set; }
+        protected TRepository Repository { get; set; }
+
+        public GenericService(TRepository repository)
+        {
+            Repository = repository;
+        }
 
         public IQueryable<TEntity> Queryable()
         {
