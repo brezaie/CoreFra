@@ -177,19 +177,21 @@ namespace CoreFra.Repository.Dapper
         public void BulkInsert(IEnumerable<TEntity> entities, SqlTransaction transaction = null,
             int batchSize = 0, int bulkCopyTimeout = 30)
         {
+            var type = typeof(TEntity);
+            var tableName = DapperHelper.GetTableName(type);
+            var tempToBeInserted = $"#{tableName}_TempInsert".Replace(".", string.Empty);
+
             try
             {
                 if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
                     Connection.Open();
 
-                var type = typeof(TEntity);
-                var tableName = DapperHelper.GetTableName(type);
+               
                 var allProperties = DapperHelper.TypePropertiesCache(type);
                 var keyProperties = DapperHelper.KeyPropertiesCache(type);
                 //var computedProperties = ComputedPropertiesCache(type);
                 var allPropertiesComputed = allProperties;
                 var allPropertiesComputedString = DapperHelper.GetColumnsStringSqlServer(allPropertiesComputed);
-                var tempToBeInserted = $"#{tableName}_TempInsert".Replace(".", string.Empty);
 
                 Connection.Execute(
                     $@"IF OBJECT_ID('tempdb..#{tempToBeInserted}') IS NOT NULL drop table #{tempToBeInserted} SELECT TOP 0 {allPropertiesComputedString} INTO {tempToBeInserted} FROM {tableName} target WITH(NOLOCK);",
@@ -213,6 +215,14 @@ namespace CoreFra.Repository.Dapper
             }
             catch (Exception ex)
             {
+
+                if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
+                    Connection.Open();
+
+                Connection.ExecuteAsync(
+                    $@"IF OBJECT_ID('tempdb..#{tempToBeInserted}') IS NOT NULL drop table #{tempToBeInserted}", null,
+                    transaction);
+
                 Console.WriteLine(ex);
                 throw;
             }
@@ -225,19 +235,20 @@ namespace CoreFra.Repository.Dapper
         public async Task BulkInsertAsync(IEnumerable<TEntity> entities, SqlTransaction transaction = null,
             int batchSize = 0, int bulkCopyTimeout = 30)
         {
+            var type = typeof(TEntity);
+            var tableName = DapperHelper.GetTableName(type);
+            var tempToBeInserted = $"#{tableName}_TempInsert".Replace(".", string.Empty);
+
             try
             {
                 if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
                     Connection.Open();
 
-                var type = typeof(TEntity);
-                var tableName = DapperHelper.GetTableName(type);
                 var allProperties = DapperHelper.TypePropertiesCache(type);
                 var keyProperties = DapperHelper.KeyPropertiesCache(type);
                 //var computedProperties = ComputedPropertiesCache(type);
                 var allPropertiesComputed = allProperties;
                 var allPropertiesComputedString = DapperHelper.GetColumnsStringSqlServer(allPropertiesComputed);
-                var tempToBeInserted = $"#{tableName}_TempInsert".Replace(".", string.Empty);
 
                 await Connection.ExecuteAsync(
                     $@"IF OBJECT_ID('tempdb..#{tempToBeInserted}') IS NOT NULL drop table #{tempToBeInserted} SELECT TOP 0 {allPropertiesComputedString} INTO {tempToBeInserted} FROM {tableName} target WITH(NOLOCK);",
@@ -261,6 +272,13 @@ namespace CoreFra.Repository.Dapper
             }
             catch (Exception ex)
             {
+                if (Connection.State == ConnectionState.Closed || Connection.State == ConnectionState.Broken)
+                    Connection.Open();
+
+                await Connection.ExecuteAsync(
+                    $@"IF OBJECT_ID('tempdb..#{tempToBeInserted}') IS NOT NULL drop table #{tempToBeInserted}", null,
+                    transaction);
+
                 Console.WriteLine(ex);
                 throw;
             }
